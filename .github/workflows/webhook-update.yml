@@ -28,6 +28,7 @@ jobs:
           echo ${{ steps.webhook.outputs.release_tag }} > webhook.version
 
       - name: Create pull request
+        id: cpr
         if: steps.webhook.outputs.current_tag != steps.webhook.outputs.release_tag
         uses: peter-evans/create-pull-request@v4
         with:
@@ -42,3 +43,11 @@ jobs:
             🤖 bot
           branch: adnanh/webhook-${{ steps.webhook.outputs.release_tag }}
           delete-branch: true
+
+      - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash
+          github-token: ${{ secrets.GITHUB_TOKEN }}
