@@ -1,18 +1,17 @@
 name: Build Docker Images
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Update webhook"]
+    types:
+      - completed
 
 jobs:
   build:
     name: Build Docker Images
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' && contains(github.event.workflow_run.head_commit.message, 'Update webhook from')
 
     steps:
       - name: Check out repository
@@ -43,7 +42,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v4
         with:
-          images: thecatlady/webhook,ghcr.io/thecatlady/webhook
+          images: parasiteoflife/webhook,ghcr.io/parasiteoflife/webhook
           flavor: |
             latest=true
           tags: |
