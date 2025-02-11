@@ -18,7 +18,6 @@ RUN         apk add --update --no-cache \
                 py3-pip \
                 tini \
                 tzdata && \
-            python -m ensurepip --upgrade && \
             pip install apprise
 COPY        --from=BUILD_IMAGE /usr/local/bin/webhook /usr/local/bin/webhook
 COPY        entrypoint.sh /usr/local/bin/entrypoint.sh
