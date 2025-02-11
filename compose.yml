@@ -1,0 +1,14 @@
+services:
+  webhook:
+    image: parasiteoflife/webhook:latest
+    container_name: webhook
+    environment:
+      TZ: Etc/UTC
+    env_file:
+      - .env
+    ports:
+      - "80:9000"
+    volumes:
+      - /path/to/appdata/config:/config:ro
+      #- /path/to/certificates:/usr/local/share/ca-certificates:ro
+    restart: unless-stopped

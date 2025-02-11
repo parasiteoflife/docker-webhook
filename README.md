@@ -13,6 +13,7 @@ Changes from upstream:
 - Added bash, python3, pip, ntfy and apprise to the image
 - Updated dependencies and webhook
 - It's possible to add custom CA certificates to the image
+- Webhook can be configured from ENV variables
 
 ----
 
@@ -32,16 +33,17 @@ Add the following volume and service definitions to a `docker-compose.yml` file:
 ```yaml
 services:
   webhook:
-    image: parasiteoflife/webhook
+    image: parasiteoflife/webhook:latest
     container_name: webhook
-    command: -verbose -hooks=hooks.yml -hotreload
     environment:
-      - TZ=America/New_York #optional
+      TZ: Etc/UTC
+    env_file:
+      - .env
+    ports:
+      - "80:9000"
     volumes:
       - /path/to/appdata/config:/config:ro
       #- /path/to/certificates:/usr/local/share/ca-certificates:ro
-    ports:
-      - 9000:9000
     restart: unless-stopped
 ```
 
@@ -58,9 +60,11 @@ Run the following command to create the container:
 ```bash
 docker run -d \
   --name=webhook \
-  -e TZ=America/New_York `#optional` \
+  -e TZ=Etc/UTC \
+  --env-file .env \
   -v /path/to/appdata/config:/config:ro \
-  -p 9000:9000 \
+  -v /path/to/certificates:/usr/local/share/ca-certificates:ro \
+  -p 80:9000 \
   --restart unless-stopped \
   parasiteoflife/webhook \
   -verbose -hooks=hooks.yml -hotreload
@@ -95,14 +99,14 @@ docker image prune
 
 The container image is configured using the following parameters passed at runtime:
 
-| Parameter                                                      | Function                                                                                                                                                                                                                                                                                                                                              |
-|----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `-e TZ=`                                                       | [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) of system time zone; e.g., `America/New_York`                                                                                                                                                                                                                        |
-| `-v /path/to/appdata/config:/config:ro`                        | Container data directory (mounted as read-only); your JSON/YAML hook definition file should be placed in this folder<br/>(Replace `/path/to/appdata/config` with the desired path on your host)                                                                                                                                                       |
-| `-v /path/to/certificates:/usr/local/share/ca-certificates:ro` | Directory containing CA certificates to add to the container (Optional)                                                                                                                                                                                                                                                                               |
-| `-p 9000:9000`                                                 | Expose port `9000`<br/>(Necessary unless only accessing `webhook` via other containers in the same Docker network)                                                                                                                                                                                                                                    |
-| `--restart`                                                    | Container [restart policy](https://docs.docker.com/engine/reference/run/#restart-policies---restart)<br/>(`always` or `unless-stopped` recommended)                                                                                                                                                                                                   |
-| `-verbose -hooks=/config/hooks.yml -hotreload`                 | [`webhook` parameters](https://github.com/adnanh/webhook/blob/master/docs/Webhook-Parameters.md); replace `hooks.yml` with the name of your JSON/YAML hook definition file, and add/modify/remove arguments to suit your needs<br/>(Can omit if using this exact configuration; otherwise, all parameters must be specified, not just those modified) |
+| Parameter                                                      | Function                                                                                                                                                                                                                                                             |
+|----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `-e TZ=`                                                       | [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) of system time zone; e.g., `America/New_York`                                                                                                                                       |
+| `-v /path/to/appdata/config:/config:ro`                        | Container data directory (mounted as read-only); your JSON/YAML hook definition file should be placed in this folder<br/>(Replace `/path/to/appdata/config` with the desired path on your host)                                                                      |
+| `-v /path/to/certificates:/usr/local/share/ca-certificates:ro` | Directory containing CA certificates to add to the container (Optional)                                                                                                                                                                                              |
+| `-p 9000:9000`                                                 | Expose port `9000`<br/>(Necessary unless only accessing `webhook` via other containers in the same Docker network)                                                                                                                                                   |
+| `--restart`                                                    | Container [restart policy](https://docs.docker.com/engine/reference/run/#restart-policies---restart)<br/>(`always` or `unless-stopped` recommended)                                                                                                                  |
+| `--env-file .env`                                              | Env file containing [`webhook` options](https://github.com/adnanh/webhook/blob/master/docs/Webhook-Parameters.md); replace the correspondent values to suit your needs<br/>(You can omit if using `-verbose -hotreloading -hooks hooks.yml` as that is the default.) |
 
 ## Configuring Hooks
 
@@ -124,17 +128,19 @@ Example `docker-compose.yml`
 ```yaml
 services:
   webhook:
-    image: parasiteoflife/webhook
+    image: parasiteoflife/webhook:latest
     container_name: webhook
-    command: -verbose -hooks=hooks.yml -hotreload
     environment:
-      - TZ=America/New_York #optional
+      TZ: Etc/UTC
+    env_file:
+      - .env
+    ports:
+      - "80:9000"
     volumes:
       - /path/to/appdata/config:/config:ro
       - /path/to/parent/git_folder:/opt/git
       - /path/to/.ssh:/root/.ssh:ro
-    ports:
-      - 9000:9000
+      #- /path/to/certificates:/usr/local/share/ca-certificates:ro
     restart: unless-stopped
 ```
 

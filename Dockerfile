@@ -28,4 +28,3 @@ RUN         chmod +x /usr/local/bin/entrypoint.sh
 WORKDIR     /config
 EXPOSE      9000
 ENTRYPOINT  ["/usr/local/bin/entrypoint.sh"]
-CMD         ["-verbose", "-hotreload", "-hooks=hooks.yml"]

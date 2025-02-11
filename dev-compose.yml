@@ -1,0 +1,15 @@
+services:
+  webhook:
+    build:
+      context: .
+    container_name: webhook
+    environment:
+      TZ: Etc/UTC
+    env_file:
+      - .env
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./config:/config:ro
+      - ./ca_certs:/usr/local/share/ca-certificates:ro
+    restart: unless-stopped
