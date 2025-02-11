@@ -17,8 +17,11 @@ RUN         apk add --update --no-cache \
                 python3 \
                 py3-pip \
                 tini \
-                tzdata && \
-            pip install apprise
+                tzdata
+RUN         python3 -m venv /venv && \
+                /venv/bin/pip install --no-cache-dir --upgrade pip apprise
+ENV         PATH="/venv/bin:$PATH"
+ENV         VIRTUAL_ENV="/venv"
 COPY        --from=BUILD_IMAGE /usr/local/bin/webhook /usr/local/bin/webhook
 COPY        entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN         chmod +x /usr/local/bin/entrypoint.sh
