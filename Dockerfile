@@ -8,9 +8,25 @@ RUN         curl -#L -o webhook.tar.gz https://api.github.com/repos/adnanh/webho
             go build -ldflags="-s -w" -o /usr/local/bin/webhook
 
 FROM        alpine:3.21.2
-RUN         apk add --update --no-cache curl jq tini tzdata
+RUN         echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-release)/main/" > /etc/apk/repositories && \
+            echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-release)/community/" >> /etc/apk/repositories && \
+            echo "# https://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> /etc/apk/repositories && \
+            apk add --update --no-cache \
+                bash \
+                ca-certificates \
+                curl \
+                jq \
+                ntfy \
+                python3 \
+                py3-pip \
+                tini \
+                tzdata && \
+            python -m ensurepip --upgrade && \
+            pip install apprise
 COPY        --from=BUILD_IMAGE /usr/local/bin/webhook /usr/local/bin/webhook
+COPY        entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN         chmod +x /usr/local/bin/entrypoint.sh
 WORKDIR     /config
 EXPOSE      9000
-ENTRYPOINT  ["/sbin/tini", "--", "/usr/local/bin/webhook"]
+ENTRYPOINT  ["/usr/local/bin/entrypoint.sh"]
 CMD         ["-verbose", "-hotreload", "-hooks=hooks.yml"]

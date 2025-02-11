@@ -1,17 +1,19 @@
 # `webhook` &#9875;
 
-[![Image Size](https://img.shields.io/docker/image-size/wontell/webhook/latest?style=flat-square&logoColor=white&logo=docker)](https://hub.docker.com/r/wontell/webhook)
-[![Last Commit](https://img.shields.io/github/last-commit/wontell/docker-webhook?style=flat-square&logoColor=white&logo=github)](https://github.com/wontell/docker-webhook)
-[![Build Status](https://img.shields.io/github/workflow/status/wontell/docker-webhook/Build%20Docker%20Images?style=flat-square&logoColor=white&logo=github%20actions)](https://github.com/wontell/docker-webhook)
-[![Become a GitHub Sponsor](https://img.shields.io/badge/github%20sponsors-help%20feed%20my%20cats!-ff69b4?style=flat-square&logo=github%20sponsors)](https://github.com/sponsors/wontell)
+[![Image Size](https://img.shields.io/docker/image-size/parasiteoflife/webhook/latest?style=flat-square&logoColor=white&logo=docker)](https://hub.docker.com/r/parasiteoflife/webhook)
+[![Last Commit](https://img.shields.io/github/last-commit/parasiteoflife/docker-webhook?style=flat-square&logoColor=white&logo=github)](https://github.com/parasiteoflife/docker-webhook)
+[![Build Status](https://img.shields.io/github/workflow/status/parasiteoflife/docker-webhook/Build%20Docker%20Images?style=flat-square&logoColor=white&logo=github%20actions)](https://github.com/parasiteoflife/docker-webhook)
 
 A lightweight, minimal [`webhook`](https://github.com/adnanh/webhook) container
 
 ## Usage
 
-Docker images are available from both [GitHub Container Registry (GHCR)](https://github.com/users/wontell/packages/container/package/webhook) and [Docker Hub](https://hub.docker.com/r/wontell/webhook).
+Docker images are available from
+both [GitHub Container Registry (GHCR)](https://github.com/users/parasiteoflife/packages/container/package/webhook)
+and [Docker Hub](https://hub.docker.com/r/parasiteoflife/webhook).
 
-If you would prefer to pull from GHCR, simply replace `wontell/webhook` with `ghcr.io/wontell/webhook` in the examples below.
+If you would prefer to pull from GHCR, simply replace `parasiteoflife/webhook` with `ghcr.io/parasiteoflife/webhook` in
+the examples below.
 
 ### Docker Compose (recommended)
 
@@ -20,16 +22,17 @@ Add the following volume and service definitions to a `docker-compose.yml` file:
 ```yaml
 services:
   webhook:
-    image: wontell/webhook
+    image: parasiteoflife/webhook
     container_name: webhook
     command: -verbose -hooks=hooks.yml -hotreload
     environment:
       - TZ=America/New_York #optional
     volumes:
       - /path/to/appdata/config:/config:ro
+      #- /path/to/certificates:/usr/local/share/ca-certificates:ro
     ports:
       - 9000:9000
-    restart: always
+    restart: unless-stopped
 ```
 
 Then, run the following command from the directory containing your `docker-compose.yml` file:
@@ -48,8 +51,8 @@ docker run -d \
   -e TZ=America/New_York `#optional` \
   -v /path/to/appdata/config:/config:ro \
   -p 9000:9000 \
-  --restart always \
-  wontell/webhook \
+  --restart unless-stopped \
+  parasiteoflife/webhook \
   -verbose -hooks=hooks.yml -hotreload
 ```
 
@@ -74,7 +77,7 @@ Run the commands below, followed by your original `docker run` command:
 ```bash
 docker stop webhook
 docker rm webhook
-docker pull wontell/webhook
+docker pull parasiteoflife/webhook
 docker image prune
 ```
 
@@ -82,13 +85,14 @@ docker image prune
 
 The container image is configured using the following parameters passed at runtime:
 
-| Parameter                                      | Function                                                                                                                                                                                                                                                                                                                                              |
-| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `-e TZ=`                                       | [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) of system time zone; e.g., `America/New_York`                                                                                                                                                                                                                        |
-| `-v /path/to/appdata/config:/config:ro`        | Container data directory (mounted as read-only); your JSON/YAML hook definition file should be placed in this folder<br/>(Replace `/path/to/appdata/config` with the desired path on your host)                                                                                                                                                       |
-| `-p 9000:9000`                                 | Expose port `9000`<br/>(Necessary unless only accessing `webhook` via other containers in the same Docker network)                                                                                                                                                                                                                                    |
-| `--restart`                                    | Container [restart policy](https://docs.docker.com/engine/reference/run/#restart-policies---restart)<br/>(`always` or `unless-stopped` recommended)                                                                                                                                                                                                   |
-| `-verbose -hooks=/config/hooks.yml -hotreload` | [`webhook` parameters](https://github.com/adnanh/webhook/blob/master/docs/Webhook-Parameters.md); replace `hooks.yml` with the name of your JSON/YAML hook definition file, and add/modify/remove arguments to suit your needs<br/>(Can omit if using this exact configuration; otherwise, all parameters must be specified, not just those modified) |
+| Parameter                                                      | Function                                                                                                                                                                                                                                                                                                                                              |
+|----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `-e TZ=`                                                       | [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) of system time zone; e.g., `America/New_York`                                                                                                                                                                                                                        |
+| `-v /path/to/appdata/config:/config:ro`                        | Container data directory (mounted as read-only); your JSON/YAML hook definition file should be placed in this folder<br/>(Replace `/path/to/appdata/config` with the desired path on your host)                                                                                                                                                       |
+| `-v /path/to/certificates:/usr/local/share/ca-certificates:ro` | Directory containing CA certificates to add to the container (Optional)                                                                                                                                                                                                                                                                               |
+| `-p 9000:9000`                                                 | Expose port `9000`<br/>(Necessary unless only accessing `webhook` via other containers in the same Docker network)                                                                                                                                                                                                                                    |
+| `--restart`                                                    | Container [restart policy](https://docs.docker.com/engine/reference/run/#restart-policies---restart)<br/>(`always` or `unless-stopped` recommended)                                                                                                                                                                                                   |
+| `-verbose -hooks=/config/hooks.yml -hotreload`                 | [`webhook` parameters](https://github.com/adnanh/webhook/blob/master/docs/Webhook-Parameters.md); replace `hooks.yml` with the name of your JSON/YAML hook definition file, and add/modify/remove arguments to suit your needs<br/>(Can omit if using this exact configuration; otherwise, all parameters must be specified, not just those modified) |
 
 ## Configuring Hooks
 
@@ -110,7 +114,7 @@ Example `docker-compose.yml`
 ```yaml
 services:
   webhook:
-    image: wontell/webhook
+    image: parasiteoflife/webhook
     container_name: webhook
     command: -verbose -hooks=hooks.yml -hotreload
     environment:
@@ -121,7 +125,7 @@ services:
       - /path/to/.ssh:/root/.ssh:ro
     ports:
       - 9000:9000
-    restart: always
+    restart: unless-stopped
 ```
 
 In the above:
@@ -246,4 +250,5 @@ Important takeaways:
 
 Show your support by starring this project! &#x1F31F; Pull requests, bug reports, and feature requests are also welcome!
 
-You can also support me by [becoming a GitHub sponsor](https://github.com/sponsors/wontell) or [making a one-time donation](https://github.com/sponsors/wontell?frequency=one-time) &#x1F496;
+You can also support me by [becoming a GitHub sponsor](https://github.com/sponsors/parasiteoflife)
+or [making a one-time donation](https://github.com/sponsors/parasiteoflife?frequency=one-time) &#x1F496;
