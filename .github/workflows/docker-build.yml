@@ -44,7 +44,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v5
         with:
-          images: wontell/webhook,ghcr.io/parasiteoflife/webhook
+          images: parasiteoflife/webhook,ghcr.io/parasiteoflife/webhook
           flavor: |
             latest=true
           tags: |
