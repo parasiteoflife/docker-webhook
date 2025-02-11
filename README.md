@@ -2,9 +2,19 @@
 
 [![Image Size](https://img.shields.io/docker/image-size/parasiteoflife/webhook/latest?style=flat-square&logoColor=white&logo=docker)](https://hub.docker.com/r/parasiteoflife/webhook)
 [![Last Commit](https://img.shields.io/github/last-commit/parasiteoflife/docker-webhook?style=flat-square&logoColor=white&logo=github)](https://github.com/parasiteoflife/docker-webhook)
-[![Build Status](https://img.shields.io/github/workflow/status/parasiteoflife/docker-webhook/Build%20Docker%20Images?style=flat-square&logoColor=white&logo=github%20actions)](https://github.com/parasiteoflife/docker-webhook)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/parasiteoflife/docker-webhook/docker-build.yml?branch=main&style=flat-square&logoColor=white&logo=github%20actions)](https://github.com/parasiteoflife/docker-webhook)
 
 A lightweight, minimal [`webhook`](https://github.com/adnanh/webhook) container
+
+----
+
+Changes from upstream:
+
+- Added bash, python3, pip, ntfy and apprise to the image
+- Updated dependencies and webhook
+- It's possible to add custom CA certificates to the image
+
+----
 
 ## Usage
 
