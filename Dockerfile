@@ -8,10 +8,7 @@ RUN         curl -#L -o webhook.tar.gz https://api.github.com/repos/adnanh/webho
             go build -ldflags="-s -w" -o /usr/local/bin/webhook
 
 FROM        alpine:3.21.2
-RUN         echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-release)/main/" > /etc/apk/repositories && \
-            echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-release)/community/" >> /etc/apk/repositories && \
-            echo "# https://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> /etc/apk/repositories && \
-            apk add --update --no-cache \
+RUN         apk add --update --no-cache \
                 bash \
                 ca-certificates \
                 curl \
