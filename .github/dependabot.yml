@@ -8,10 +8,6 @@ updates:
     labels:
       - 🧩 dependencies
       - 🤖 bot
-    groups:
-      all-docker-updates:
-        patterns:
-          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -20,7 +16,3 @@ updates:
     labels:
       - 🧩 dependencies
       - 🤖 bot
-    groups:
-      all-github-actions-updates:
-        patterns:
-          - "*"
