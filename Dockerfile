@@ -7,7 +7,7 @@ RUN         curl -#L -o webhook.tar.gz https://api.github.com/repos/adnanh/webho
             go get -d && \
             go build -ldflags="-s -w" -o /usr/local/bin/webhook
 
-FROM        alpine:3.21.2
+FROM        alpine:3.21.3
 RUN         apk add --update --no-cache \
                 bash \
                 ca-certificates \
